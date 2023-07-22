@@ -4,7 +4,9 @@ root = tk.Tk()
 
 # Set minimum size of the window to the current size
 root.update_idletasks()
-root.minsize(1280, 720)
+min_width = 1280
+min_height = 720
+root.minsize(min_width, min_height)
 
 # Prevent columns and rows from resizing
 for col in range(3):
@@ -13,7 +15,7 @@ for col in range(3):
 for row in range(20):
     root.rowconfigure(row, weight=1)
 
-canvas = tk.Canvas(root, width=1280, height=720)
+canvas = tk.Canvas(root, width=1280, height=750)
 canvas.grid(columnspan=3, rowspan=20)
 
 # Display Program Name
@@ -29,4 +31,31 @@ paste_code_message.grid(column=0, row=1)
 fcb_message = tk.Label(root, text="Copy your formatted SQL code from the textbox below.", 
                        font = ("Arial", 12))
 fcb_message.grid(column=2, row=1)
+
+#Create left text box
+left_tb = tk.Text(root, height=30, width = 65, font = ("Cascadia Code", 11))
+left_tb.grid(column=0, row=3, pady = 5)
+
+#Create right text box
+right_tb = tk.Text(root, height=30, width=65, font = ("Cascadia Code", 11), state="disabled")
+right_tb.grid(column=2, row=3, pady=5)
+
+#Creating scrollbars
+
+#Left scrollbar
+# Create a vertical scrollbar and associate it with the left_tb Text widget
+scrollbar_left = tk.Scrollbar(root, command=left_tb.yview)
+scrollbar_left.grid(column=1, row=3, sticky='ns')
+
+# Configure the Text widget to use the scrollbar
+left_tb.config(yscrollcommand=scrollbar_left.set)
+
+#Right scrollbar
+# Create a vertical scrollbar and associate it with the right_tb Text widget
+scrollbar_right = tk.Scrollbar(root, command=right_tb.yview)
+scrollbar_right.grid(column=3, row=3, sticky='nsw')
+
+# Configure the Text widget to use the scrollbar
+right_tb.config(yscrollcommand=scrollbar_right.set)
+
 root.mainloop()
