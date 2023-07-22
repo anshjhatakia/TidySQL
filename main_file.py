@@ -41,21 +41,31 @@ right_tb = tk.Text(root, height=30, width=65, font = ("Cascadia Code", 11), stat
 right_tb.grid(column=2, row=3, pady=5)
 
 #Creating scrollbars
-
 #Left scrollbar
 # Create a vertical scrollbar and associate it with the left_tb Text widget
 scrollbar_left = tk.Scrollbar(root, command=left_tb.yview)
 scrollbar_left.grid(column=1, row=3, sticky='ns')
-
-# Configure the Text widget to use the scrollbar
-left_tb.config(yscrollcommand=scrollbar_left.set)
 
 #Right scrollbar
 # Create a vertical scrollbar and associate it with the right_tb Text widget
 scrollbar_right = tk.Scrollbar(root, command=right_tb.yview)
 scrollbar_right.grid(column=3, row=3, sticky='nsw')
 
-# Configure the Text widget to use the scrollbar
+# Configure the left text widget to use the scrollbar
+left_tb.config(yscrollcommand=scrollbar_left.set)
+
+# Configure the right text widget to use the scrollbar
 right_tb.config(yscrollcommand=scrollbar_right.set)
 
+#Tidy up button
+tidy_up_text = tk.StringVar()
+tidy_up_text.set("Tidy up")
+tidy_up_button = tk.Button(root, textvariable=tidy_up_text, bg="#07611c", font=("Arial", 13))
+tidy_up_button.grid(column=0, row=4)
+
+#Clear box button
+clear_box_text = tk.StringVar()
+clear_box_text.set("Clear")
+clear_box_button = tk.Button(root, textvariable=clear_box_text, bg="#b52836", font=("Arial", 13))
+clear_box_button.grid(column=0, row=5)
 root.mainloop()
