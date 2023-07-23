@@ -1,14 +1,49 @@
 import tkinter as tk
+import tkinter.messagebox as msgbox
+
+reserved_word_set = set()
+newline_word_set = set()
+check_next_word = {"GROUP", "ORDER", "INSERT", "DELETE", 
+                      "CREATE", "ALTER", "DROP", "INNER", 
+                      "LEFT", "RIGHT"}
+
+def initialize_word_sets():
+    with open("reserved_words.txt", 'r') as file:
+        for word in file:
+            curr_word = word.strip()
+            if curr_word != "\n":
+                reserved_word_set.add(curr_word)
+                print(curr_word)
+    
+    with open("newline_words.txt", 'r') as file:
+        for word in file:
+            curr_word = word.strip()
+            if curr_word != "\n":
+                newline_word_set.add(curr_word)
+                print(curr_word)
+
+
+
+def start_formatting():
+    right_tb.delete("1.0", "end") #Delete current right box content
+    text_content = left_tb.get("1.0", "end-1c")  # Get all text from the textbox
+    #print(text_content)
+    lines_list = text_content.split()  # Split text into a list of lines
+    print(lines_list) 
+    right_tb.insert("1.0", text_content)
+
+def copy_to_clipboard():
+    root.clipboard_clear() #Clear the clipboard
+    copied_text=right_tb.get("1.0", "end") #variable equal to right box content
+    root.clipboard_append(copied_text) 
+    msgbox.showinfo("Copied!", "Your tidy SQL has been copied to clipboard.")
 
 def clear_box():
     left_tb.delete("1.0", "end")
 
-
-def start_formatting():
-    right_tb.delete("1.0", "end")
-    text_content = left_tb.get("1.0", "end-1c")  # Get all text from the textbox
-    print(text_content)
-    right_tb.insert("1.0", text_content)
+def paste():
+    orig_text = root.clipboard_get()
+    left_tb.insert("insert", orig_text)
 
 root = tk.Tk()
 
@@ -29,7 +64,7 @@ canvas = tk.Canvas(root, width=1280, height=750)
 canvas.grid(columnspan=3, rowspan=20)
 
 # Display Program Name
-program_name = tk.Label(root, text="TidySQL", font=("Arial", 30))
+program_name = tk.Label(root, text="TidySQL", font=("Cascadia Code", 30))
 program_name.grid(columnspan=3, row=0)
 
 # Tell user to paste unformatted code into box
@@ -45,6 +80,8 @@ fcb_message.grid(column=2, row=1)
 #Create left text box
 left_tb = tk.Text(root, height=30, width = 65, font=("Cascadia Code", 11), wrap="none")
 left_tb.grid(column=0, row=3, pady = 5)
+# Bind Ctrl-V to the paste function
+left_tb.bind("<Control-v>", paste)
 
 #Create right text box
 right_tb = tk.Text(root, height=30, width=65, font=("Cascadia Code", 11), wrap="none")
@@ -92,8 +129,10 @@ clear_box_button.grid(column=0, row=6)
 #Copy to clipboard button
 clipboard_text= tk.StringVar()
 clipboard_text.set("Copy to clipboard")
-clipboard_button = tk.Button(root, textvariable=clipboard_text, bg="#c4bcbd", font=("Arial", 13))
+clipboard_button = tk.Button(root, textvariable=clipboard_text, command=copy_to_clipboard, bg="#c4bcbd", font=("Arial", 13))
 clipboard_button.grid(column=2, row=5)
+
+initialize_word_sets()
 
 root.mainloop()
 
