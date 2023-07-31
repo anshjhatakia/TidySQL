@@ -1,11 +1,14 @@
 import tkinter as tk
 import tkinter.messagebox as msgbox
 
+select_counter = 0
+
 reserved_word_set = set()
 newline_word_set = set()
 check_next_word = {"GROUP", "ORDER", "INSERT", "DELETE", 
                       "CREATE", "ALTER", "DROP", "INNER", 
                       "LEFT", "RIGHT"}
+final_word_list = []
 
 def initialize_word_sets():
     with open("reserved_words.txt", 'r') as file:
@@ -22,24 +25,56 @@ def initialize_word_sets():
                 newline_word_set.add(curr_word)
                 print(curr_word)
 
+def formatter_core(input_list):
+    #print(input_list[0].upper()) TEST
+    global select_counter #telling python to apply changes to the variable out of scope
+
+    for word in input_list:
+        if word.upper() in newline_word_set:
+
+            if word.upper() == "SELECT":
+                final_word_list.append("\n" + select_counter * "     " + word)
+                select_counter += 1
+
+            else:
+                final_word_list.append("\n" + (select_counter - 1) * "     " + word)
+        else:
+            final_word_list.append(" " + word)
+
+        print(final_word_list)
+    
+    display_list()
+    
+def display_list():
+    for line in final_word_list:
+        right_tb.insert(tk.END, line)
+    
 
 
 def start_formatting():
+    global select_counter, final_word_list
+
+    select_counter = 0
+    final_word_list = []
     right_tb.delete("1.0", "end") #Delete current right box content
+
     text_content = left_tb.get("1.0", "end-1c")  # Get all text from the textbox
     #print(text_content)
     lines_list = text_content.split()  # Split text into a list of lines
-    print(lines_list) 
-    right_tb.insert("1.0", text_content)
+    #print(lines_list)
+    formatter_core(lines_list) 
+    #right_tb.insert("1.0", text_content)
 
 def copy_to_clipboard():
     root.clipboard_clear() #Clear the clipboard
     copied_text=right_tb.get("1.0", "end") #variable equal to right box content
     root.clipboard_append(copied_text) 
-    msgbox.showinfo("Copied!", "Your tidy SQL has been copied to clipboard.")
+    msgbox.showinfo("Copy Successful", "Your tidy SQL has been copied to clipboard.")
 
 def clear_box():
     left_tb.delete("1.0", "end")
+    final_word_list = ()
+    select_counter = 0
 
 def paste():
     orig_text = root.clipboard_get()
